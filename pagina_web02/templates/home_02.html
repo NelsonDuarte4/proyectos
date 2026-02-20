@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banco Fidelix - Panel Principal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-900 text-gray-900 flex flex-col items-center min-h-screen">
+
+  <!-- Encabezado -->
+  <header class="w-full bg-white shadow-sm py-4 px-8 flex items-center justify-between border-b-2 border-indigo-100">
+    <div class="flex items-center">
+      <img src="{{ url_for('static', filename='FIDELIX_HORIZONTAL_LOGO.png') }}" class="h-20 w-auto mr-3" alt="Banco Fidelix">
+      <h1 class="text-xl font-semibold text-indigo-900">Banco Fidelix</h1>
+    </div>
+    <a href="{{ url_for('logout') }}" class="text-indigo-900 hover:text-indigo-700 font-semibold">Cerrar Sesión</a>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="bg-white shadow-lg rounded-2xl p-10 w-full max-w-4xl mt-10 mb-10">
+
+    {% if not empleado %}
+    <!-- Si no hay datos del empleado -->
+    <section class="text-center">
+      <h1 class="text-4xl font-bold text-red-600 mb-4">¡ERROR!</h1>
+      <p class="text-lg mb-4">No se encontraron datos del empleado.</p>
+      <a href="{{ url_for('logout') }}" class="text-blue-600 underline hover:text-blue-800">Cerrar sesión</a>
+    </section>
+    {% else %}
+    <!-- Si hay datos del empleado -->
+    <section id="panel-usuario">
+      <!-- Saludo con nombre dinámico -->
+      <h2 class="text-5xl font-extrabold text-indigo-900 mb-8 text-center" style="font-family: 'Heiti SC', sans-serif;">
+        ¡Hola, {{ empleado.nombre }} {{ empleado.apellido }}!
+      </h2>
+
+      <!-- Formulario de datos con valores dinámicos -->
+      <form class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <input type="email" placeholder="Correo" value="{{ empleado.correo or '' }}" 
+               class="border border-indigo-900 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 rounded-md px-3 py-2 text-sm" readonly />
+        <input type="tel" placeholder="Celular" value="{{ empleado.celular or '' }}" 
+               class="border border-indigo-900 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 rounded-md px-3 py-2 text-sm" readonly />
+        <input type="text" placeholder="Cédula" value="{{ empleado.cedula or '' }}" 
+               class="border border-indigo-900 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 rounded-md px-3 py-2 text-sm" readonly />
+        <input type="date" placeholder="Fecha de nacimiento" value="{{ empleado.fecha_nacimiento or '' }}" 
+               class="border border-indigo-900 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 rounded-md px-3 py-2 text-sm" readonly />
+      </form>
+
+      <!-- Mostrar puntos acumulados -->
+      <div class="w-2/3 border-2 border-indigo-900 text-indigo-900 font-semibold text-lg py-3 rounded-md bg-indigo-50 mx-auto block text-center mb-4">
+        <p class="text-sm text-gray-600">Puntos acumulados</p>
+        <p class="text-3xl font-bold">{{ empleado.puntos_acumulados }}</p>
+      </div>
+
+      <!-- Canje de recompensas -->
+      <section class="mt-10">
+        <h3 class="text-4xl font-bold text-center mb-4" style="font-family: 'Heiti SC', sans-serif;">Canjea tus recompensas</h3>
+       
+        <!-- Mostrar mensajes -->
+        {% if mensaje %}
+        <div class="p-4 mb-4 rounded-lg {% if mensaje_tipo == 'success' %}bg-green-100 text-green-800{% elif mensaje_tipo == 'error' %}bg-red-100 text-red-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+          {{ mensaje }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('canjear') }}" class="space-y-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2 text-center">Selecciona una recompensa:</label>
+
+          <!-- GRID DE RECOMPENSAS -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-items-center">
+            <!-- Recompensa 1 -->
+            <input type="radio" id="r1" name="recompensa" value="2500" class="hidden peer/r1">
+            <label for="r1"
+              class="peer-checked/r1:border-blue-500 peer-checked/r1:bg-blue-100 border-2 border-gray-300 rounded-xl w-28 h-36 flex flex-col justify-center items-center text-center cursor-pointer transition transform duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg">
+              <img src="{{ url_for('static', filename='movie-svgrepo-com.svg') }}" alt="Entradas Cine" class="w-10 h-10 mb-2">
+              <span class="text-xs">2 Entradas al Cine</span>
+              <span class="text-sm text-gray-500 font-bold">(2.500 pts)</span>
+            </label>
+
+            <!-- Recompensa 2 -->
+            <input type="radio" id="r2" name="recompensa" value="5000" class="hidden peer/r2">
+            <label for="r2"
+              class="peer-checked/r2:border-blue-500 peer-checked/r2:bg-blue-100 border-2 border-gray-300 rounded-xl w-28 h-36 flex flex-col justify-center items-center text-center cursor-pointer transition transform duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg">
+              <img src="{{ url_for('static', filename='gift-card-svgrepo-com.svg') }}" alt="Gift Card" class="w-10 h-10 mb-2">
+              <span class="text-xs">Gift Card</span>
+              <span class="text-sm text-gray-500 font-bold">(5.000 pts)</span>
+            </label>
+
+            <!-- Recompensa 3 -->
+            <input type="radio" id="r3" name="recompensa" value="9000" class="hidden peer/r3">
+            <label for="r3"
+              class="peer-checked/r3:border-blue-500 peer-checked/r3:bg-blue-100 border-2 border-gray-300 rounded-xl w-28 h-36 flex flex-col justify-center items-center text-center cursor-pointer transition transform duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg">
+              <img src="{{ url_for('static', filename='speaker-svgrepo-com.svg') }}" alt="Speaker" class="w-10 h-10 mb-2">
+              <span class="text-xs">Speaker JBL Flip 7</span>
+              <span class="text-sm text-gray-500 font-bold">(9.000 pts)</span>
+            </label>
+
+            <!-- Recompensa 4 -->
+            <input type="radio" id="r4" name="recompensa" value="10000" class="hidden peer/r4">
+            <label for="r4"
+              class="peer-checked/r4:border-blue-500 peer-checked/r4:bg-blue-100 border-2 border-gray-300 rounded-xl w-28 h-36 flex flex-col justify-center items-center text-center cursor-pointer transition transform duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg">
+              <img src="{{ url_for('static', filename='plane-svgrepo-com.svg') }}" alt="Viaje" class="w-10 h-10 mb-2">
+              <span class="text-xs">Viaje a Río de Janeiro</span>
+              <span class="text-sm text-gray-500 font-bold">(10.000 pts)</span>
+            </label>
+          </div>
+
+          <!-- Botón Canjear -->
+          <button type="submit"
+            class="w-full bg-yellow-500 hover:bg-blue-900 text-white font-semibold py-2 rounded-lg transition">
+            Canjear
+          </button>
+        </form>
+      </section>
+    </section>
+    {% endif %}
+
+  </main>
+</body>
+</html>

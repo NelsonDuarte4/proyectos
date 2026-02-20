@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fidelix | Inicio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-900 text-gray-900 flex flex-col items-center min-h-screen">
+
+  <!-- CABECERA -->
+  <header class="absolute inset-x-5 top-4 z-50 rounded-2xl bg-white/35 backdrop-blur-md">
+    <nav class="flex items-center justify-between p-4 lg:px-8" aria-label="Global">
+      <div class="flex lg:flex-1">
+        <a href="#" class="-m-1.5 p-1.5 flex items-center space-x-2">
+          <img src="/imagenes/FIDELIX_POSITIVO_LOGO.svg" class="h-8 w-auto">
+        </a>
+      </div>
+      <div class="flex items-center space-x-1 text-sm font-medium text-white" style="font-family: 'Heiti SC', sans-serif;">
+        <span>Inicio</span>
+      </div>
+    </nav>
+  </header>
+  
+  <!-- FONDO DECORATIVO -->
+  <div class="px-6 pt-5 lg:px-8">
+    <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="mx-auto max-w-3xl bg-white shadow-2xl rounded-3xl p-10 mt-20 mb-10 space-y-10">
+      
+      <header class="text-center">
+        <h1 class="text-4xl font-semibold text-indigo-900 mb-2" style="font-family: 'Heiti SC', sans-serif;">
+          ¡Bienvenido a Fidelix!</h1>
+        <h2 class="text-1xl font-light text-indigo-10 mb-2" style="font-family: 'Heiti SC', sans-serif;">Aquí, cada logro tuyo cuenta. Y se celebra.</h2>
+      </header>
+
+      <!-- FORMULARIO -->
+      <section class="text-center">
+        <h2 class="text-2xl font-semibold text-indigo-900 mb-4" style="font-family: 'Heiti SC', sans-serif;">Iniciar sesión</h2>
+        <div class="">
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <ul>
+                {% for m in messages %}
+                  <li>{{ m }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+        </div>
+        <form method="post" class="flex flex-col items-center space-y-4">
+          <div class="w-full max-w-sm">
+            <label class="block text-left text-gray-700 font-medium mb-1" style="font-family: 'Heiti SC', sans-serif;">Usuario: 
+              <input type="text" name="username" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </label>
+          </div>
+
+          <div class="w-full max-w-sm">
+            <label class="block text-left text-gray-700 font-medium mb-1" style="font-family: 'Heiti SC', sans-serif;">Contraseña: 
+              <input class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" type="password" name="password" required>
+            </label>
+          </div>
+
+          <button type="submit" class="bg-yellow-500 hover:bg-indigo-900 hover:scale-105 text-white font-semibold px-6 py-2 rounded-xl transition" style="font-family: 'Heiti SC', sans-serif;">Entrar</button>
+        </form>
+      </section>
+
+      <!-- SECCIÓN: ¿Qué es este programa? -->
+      <section class="bg-white border border-blue-500 rounded-xl shadow-md p-6">
+        <div class="flex items-start space-x-4">
+          <!-- Ícono decorativo -->
+          <div class="flex-shrink-0">
+            <div class="bg-indigo-100 text-indigo-600 rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Contenido -->
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold text-gray-900 mb-2" style="font-family: 'Heiti SC', sans-serif;">
+              ¿Qué es este programa?  
+            </h2>
+            <p class="text-gray-600 leading-relaxed text-justify" style="font-family: 'Heiti SC', sans-serif;">
+              Es nuestro sistema de fidelización interna. Cada vez que alcanzás una meta, superás un desafío o contribuís con tu talento, sumás puntos, reconocimientos y experiencias que te motivan a seguir creciendo. Porque tu trabajo no pasa desapercibido. Y tu impacto merece ser celebrado.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: ¿Qué podés ganar? -->
+      <section class="bg-white border border-green-500 rounded-xl shadow-md p-6">
+        <div class="flex items-start space-x-4">
+          <!-- Ícono decorativo -->
+          <div class="flex-shrink-0">
+            <div class="bg-green-100 rounded-full p-3">
+              <img src="/imagenes/reward-4-svgrepo-com.svg" alt="Ícono de recompensa" class="h-6 w-6">
+            </div>
+          </div>
+
+          <!-- Contenido -->
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold text-green-900 mb-2" style="font-family: 'Heiti SC', sans-serif;">
+              ¿Qué podés ganar?
+            </h2>
+            <ul class="list-disc list-inside space-y-1 text-gray-600" style="font-family: 'Heiti SC', sans-serif;">
+              <li>Día libre adicional</li>
+              <li>Mención destacada + kits sorpresa</li>
+              <li>Cursos de capacitación adicionales</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: ¿Cómo funciona? -->
+      <section class="bg-white border border-purple-500 rounded-xl shadow-md p-6">
+        <div class="flex items-start space-x-4">
+          <!-- Ícono decorativo -->
+          <div class="flex-shrink-0">
+            <div class="bg-purple-100 text-purple-600 rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Contenido -->
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold text-purple-900 mb-2" style="font-family: 'Heiti SC', sans-serif;">
+              ¿Cómo funciona?
+            </h2>
+            <ol class="list-decimal list-inside space-y-1 text-gray-600" style="font-family: 'Heiti SC', sans-serif;">
+              <li>Definí tus metas y valores</li>
+              <li>Premiá cada logro con impacto</li>
+              <li>Observá cómo crece el compromiso</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: ¿Por qué lo hacemos? -->
+      <section class="bg-white border border-yellow-500 rounded-xl shadow-md p-6">
+        <div class="flex items-start space-x-4">
+          <!-- Ícono decorativo -->
+          <div class="flex-shrink-0">
+            <div class="bg-yellow-100 text-yellow-600 rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Contenido -->
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold text-yellow-900 mb-2" style="font-family: 'Heiti SC', sans-serif;">
+              ¿Por qué lo hacemos?
+            </h2>
+            <p class="text-gray-600 leading-relaxed text-justify" style="font-family: 'Heiti SC', sans-serif;">
+              Porque queremos que te sientas parte de algo más grande. Porque tu esfuerzo construye esta empresa todos los días. Porque cuando vos crecés, todos crecemos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="text-center text-sm text-gray-500 pb-8" style="font-family: 'Heiti SC', sans-serif;">
+    © 2025 FIDELIX. Todos los derechos reservados.
+  </footer>
+
+</body>
+</html>

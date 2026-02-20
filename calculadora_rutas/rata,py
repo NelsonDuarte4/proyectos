@@ -1,0 +1,140 @@
+from collections import deque   # Importa deque, una cola eficiente para BFS
+import random                  
+
+def crear_mapa(filas, columnas, cantidad_obstaculos, cantidad_alternativos, cantidad_temporales):
+    mapa = []  
+
+    # Crear mapa vacío
+    # 0 = camino normal
+    for i in range(filas):
+        fila = []                 
+        for j in range(columnas):
+            fila.append(0)        
+        mapa.append(fila)         
+
+    # Obstáculos permanentes 
+    # 1 = obstáculo (no se puede pasar)
+    creados = 0
+    while creados < cantidad_obstaculos:
+        x = random.randint(0, filas - 1)      
+        y = random.randint(0, columnas - 1)   
+        if mapa[x][y] == 0:                   
+            mapa[x][y] = 1                    
+            creados += 1
+
+    # Caminos alternativos 
+    # 2 = camino alternativo (se puede pasar)
+    creados = 0
+    while creados < cantidad_alternativos:
+        x = random.randint(0, filas - 1)
+        y = random.randint(0, columnas - 1)
+        if mapa[x][y] == 0:
+            mapa[x][y] = 2                    
+            creados += 1
+
+    # Zonas bloqueadas temporalmente 
+    # 3 = zona bloqueada (no se puede pasar)
+    creados = 0
+    while creados < cantidad_temporales:
+        x = random.randint(0, filas - 1)
+        y = random.randint(0, columnas - 1)
+        if mapa[x][y] == 0:
+            mapa[x][y] = 3                    
+            creados += 1
+
+    return mapa   
+
+def mostrar_mapa(mapa, ruta=None, inicio=None, destino=None):
+    for i in range(len(mapa)):             
+        for j in range(len(mapa[0])):      
+            posicion = (i, j)              
+
+            if posicion == inicio:
+                print("E", end=" ")        
+            elif posicion == destino:
+                print("S", end=" ")        
+            elif ruta and posicion in ruta:
+                print("*", end=" ")        
+            elif mapa[i][j] == 0:
+                print(".", end=" ")        
+            elif mapa[i][j] == 2:
+                print("~", end=" ")        
+            elif mapa[i][j] == 3:
+                print("T", end=" ")        
+            else:
+                print("X", end=" ")        
+        print()
+    print()
+
+def coordenada_valida(x, y, mapa):
+    return 0 <= x < len(mapa) and 0 <= y < len(mapa[0])
+
+def pedir_coordenada(mensaje, mapa):
+    while True:
+        x = int(input(f"Fila {mensaje}: "))      
+        y = int(input(f"Columna {mensaje}: "))   
+
+        if not coordenada_valida(x, y, mapa):
+            print(" Fuera del mapa.")
+        elif mapa[x][y] == 1:
+            print(" Hay un obstáculo.")
+        elif mapa[x][y] == 3:
+            print(" Zona bloqueada temporalmente.")
+        else:
+            return (x, y)   
+
+def buscar_ruta_bfs(mapa, inicio, destino):
+    cola = deque() 
+    cola.append((inicio, [inicio]))  
+    visitado = set() 
+    visitado.add(inicio)             
+
+    while cola:                      
+        posicion_actual, camino = cola.popleft()  #
+
+        if posicion_actual == destino:
+            return camino            
+
+        x, y = posicion_actual
+        movimientos = [(1,0), (-1,0), (0,1), (0,-1)]  
+
+        for dx, dy in movimientos:
+            nx = x + dx              
+            ny = y + dy              
+            nueva = (nx, ny)         
+
+            if coordenada_valida(nx, ny, mapa):
+                if mapa[nx][ny] not in (1, 3) and nueva not in visitado:
+                    visitado.add(nueva)            
+                    cola.append((nueva, camino + [nueva]))  
+
+    return None   
+
+
+filas = int(input("Filas del mapa: "))
+columnas = int(input("Columnas del mapa: "))
+cantidad_obstaculos = int(input("Cantidad de obstáculos: "))
+cantidad_alternativos = int(input("Cantidad de caminos alternativos: "))
+cantidad_temporales = int(input("Cantidad de zonas bloqueadas temporales: "))
+
+mapa = crear_mapa(filas, columnas, cantidad_obstaculos, cantidad_alternativos, cantidad_temporales)
+
+print("\nMapa generado:")
+mostrar_mapa(mapa)
+
+inicio = pedir_coordenada("de entrada (E)", mapa)
+
+while True:
+    destino = pedir_coordenada("de salida (S)", mapa)
+    ruta = buscar_ruta_bfs(mapa, inicio, destino)
+
+    if ruta:
+        print("\nRuta más corta encontrada:")
+        mostrar_mapa(mapa, ruta, inicio, destino)
+
+        opcion = input("¿Recalcular ruta con otra salida? (s/n): ").lower()
+        if opcion != "s":
+            print("Programa finalizado.")
+            break
+    else:
+        print("❌ No se encontró una ruta posible. Intente otra salida.")
