@@ -7,7 +7,6 @@ import random
 
 class Mapa:
 
-    # constructor
     def __init__(self, dim):
         self.dim = dim
         self.filas = dim
@@ -16,7 +15,6 @@ class Mapa:
         self.inicio = None
         self.meta = None
 
-    # generar obstaculos
     def generar_obstaculos_aleatorios(self, cantidad):
         creados = 0
         while creados < cantidad:
@@ -27,23 +25,27 @@ class Mapa:
                 self.tablero[rf][rc] = random.choice([1, 2])
                 creados += 1
 
-    # inicio
     def set_inicio(self, f, c):
         self.inicio = (f, c)
         self.tablero[f][c] = 9
 
-    # meta
     def set_meta(self, f, c):
         self.meta = (f, c)
         self.tablero[f][c] = 8
 
-    # dibujar
     def dibujar(self, camino=[]):
-        iconos = {0:"⬜", 1:"🟥", 2:"🟦", 3:"🟥", 8:"🟨", 9:"🟧"}
+        iconos = {
+            0: "⬜",
+            1: "🟥",
+            2: "🟦",
+            3: "🟥",
+            8: "🟨",
+            9: "🟧"
+        }
 
         camino_set = set(camino)
 
-        print("   ", end="")
+        print("\n   ", end="")
         for c in range(self.cols):
             print(c, end=" ")
         print()
@@ -65,7 +67,6 @@ class Mapa:
 
 class CalculadoraDeRutas:
 
-    # movimientos posibles
     def _movimientos(self, f, c, mapa):
         movs = []
         direcciones = [(-1,0), (1,0), (0,-1), (0,1)]
@@ -79,9 +80,7 @@ class CalculadoraDeRutas:
 
         return movs
 
-    # encontrar camino (Dijkstra simple)
     def encontrar_camino(self, mapa):
-
         start = mapa.inicio
         end = mapa.meta
 
@@ -89,7 +88,6 @@ class CalculadoraDeRutas:
         visitados = set()
 
         while len(cola) > 0:
-
             costo, f, c, camino = heapq.heappop(cola)
 
             if (f, c) == end:
@@ -101,8 +99,8 @@ class CalculadoraDeRutas:
             visitados.add((f, c))
 
             for nf, nc in self._movimientos(f, c, mapa):
-
                 terreno = mapa.tablero[nf][nc]
+
                 peso = 0
                 se_puede = False
 
@@ -115,7 +113,10 @@ class CalculadoraDeRutas:
                     se_puede = True
 
                 if se_puede and (nf, nc) not in visitados:
-                    heapq.heappush(cola, (costo + peso, nf, nc, camino + [(nf, nc)]))
+                    heapq.heappush(
+                        cola,
+                        (costo + peso, nf, nc, camino + [(nf, nc)])
+                    )
 
         return [], 0
 
@@ -126,26 +127,26 @@ class CalculadoraDeRutas:
 
 def main():
 
-    dim = int(input("Tamaño del tablero: "))
+    dim = int(input("Ingrese tamaño del tablero: "))
     mi_mapa = Mapa(dim)
 
-    cant = int(input("Cantidad de obstáculos: "))
+    cant = int(input("Ingrese cantidad de obstáculos: "))
     mi_mapa.generar_obstaculos_aleatorios(cant)
 
     mi_mapa.dibujar()
 
-    f_ini, c_ini = map(int, input("Inicio (fila col): ").split())
+    f_ini, c_ini = map(int, input("Ingrese inicio (fila columna): ").split())
     mi_mapa.set_inicio(f_ini, c_ini)
 
-    f_meta, c_meta = map(int, input("Meta (fila col): ").split())
+    f_meta, c_meta = map(int, input("Ingrese meta (fila columna): ").split())
     mi_mapa.set_meta(f_meta, c_meta)
 
     calc = CalculadoraDeRutas()
     ruta, costo = calc.encontrar_camino(mi_mapa)
 
-    print("\nCosto total:", costo)
+    print("\nCosto total de la ruta:", costo)
     mi_mapa.dibujar(ruta)
-    print("Ruta:", ruta)
+    print("Ruta encontrada:", ruta)
 
 
 if __name__ == "__main__":
