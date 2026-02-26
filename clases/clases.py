@@ -8,7 +8,6 @@ class Mapa:
     def __init__(self, filas, columnas, cantidad_obstaculos, cantidad_alternativos):
         self.filas = filas              # Atributo de instancia
         self.columnas = columnas        # Atributo de instancia
-        
         # Estructura interna del objeto (estado encapsulado)
         self.matriz = [[0 for _ in range(columnas)] for _ in range(filas)]
         
