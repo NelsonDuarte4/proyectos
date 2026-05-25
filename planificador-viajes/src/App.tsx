@@ -16,7 +16,7 @@ interface Destino {
 // Componente auxiliar para mover la cámara del mapa suavemente
 function CambiarVistaMapa({ centro }: { centro: [number, number] }) {
   const mapa = useMap()
-  mapa.setView(centro, 6, { animate: true }) // Zoom intermedio (6) para ver bien la región
+  mapa.setView(centro, 6, { animate: true })
   return null
 }
 
@@ -50,7 +50,7 @@ function App() {
     }
   }
 
-  // Manejador del formulario (Búsqueda inteligente por campos separados)
+  // Manejador para agregar un destino nuevo
   const manejarAgregarDestino = async (e: FormEvent) => {
     e.preventDefault()
     if (!nuevaCiudad.trim() || !nuevoPais.trim() || !nuevaFecha) return
@@ -58,15 +58,10 @@ function App() {
     setCargando(true)
 
     try {
-      // 1. Buscamos el clima de la ciudad
       const climaObtenido = await obtenerClima(nuevaCiudad)
 
-      // 2. Intento 1: Buscamos estructurado (separando ciudad y país para máxima precisión)
       const urlAPI = `https://nominatim.openstreetmap.org/search?format=json&city=${encodeURIComponent(nuevaCiudad)}&country=${encodeURIComponent(nuevoPais)}&limit=1`
-      
-      const respuestaGeo = await fetch(urlAPI, {
-        headers: { 'Accept-Language': 'es,en' } // Prioriza nombres en español o inglés
-      })
+      const respuestaGeo = await fetch(urlAPI, { headers: { 'Accept-Language': 'es,en' } })
       const datosGeo = await respuestaGeo.json()
 
       let lat = 0
@@ -76,7 +71,6 @@ function App() {
         lat = parseFloat(datosGeo[0].lat)
         lng = parseFloat(datosGeo[0].lon)
       } else {
-        // Intento 2: Si falló el anterior, hacemos una búsqueda libre general (más flexible)
         const urlAlternativa = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(`${nuevaCiudad} ${nuevoPais}`)}&limit=1`
         const resAlt = await fetch(urlAlternativa)
         const datosAlt = await resAlt.json()
@@ -89,7 +83,6 @@ function App() {
         }
       }
 
-      // Si encontramos coordenadas válidas (distintas de 0), agregamos el destino
       if (lat !== 0 && lng !== 0) {
         const nuevoDestino: Destino = {
           id: Date.now(),
@@ -103,20 +96,25 @@ function App() {
         }
 
         setMisDestinos([...misDestinos, nuevoDestino])
-        setCentroMapa([lat, lng]) // Mueve la cámara al nuevo lugar
+        setCentroMapa([lat, lng])
       }
 
     } catch (error) {
       console.error("Error al procesar el destino:", error)
-      alert("Hubo un problema de conexión al buscar el lugar.")
     }
 
-    // Reseteamos los campos del formulario
     setCargando(false)
     setNuevaCiudad('')
     setNuevoPais('')
     setNuevaFecha('')
     setNuevaDuracion(1)
+  }
+
+  // 👇 NUEVA FUNCIÓN: Eliminar destino por ID sin romper el flujo del mapa
+  const eliminarDestino = (idAEliminar: number, e: React.MouseEvent) => {
+    e.stopPropagation() // Evita que al hacer clic en borrar también se mueva el mapa al destino
+    const listaFiltrada = misDestinos.filter(destino => destino.id !== idAEliminar)
+    setMisDestinos(listaFiltrada)
   }
 
   return (
@@ -139,13 +137,23 @@ function App() {
           </button>
         </form>
 
-        <h3 style={{ marginTop: '20px' }}>Tus Destinos (Haz clic para viajar):</h3>
+        <h3 style={{ marginTop: '20px' }}>Tus Destinos:</h3>
         {misDestinos.map(destino => (
-          <div key={destino.id} onClick={() => setCentroMapa([destino.lat, destino.lng])} style={{ background: '#222', padding: '12px', borderRadius: '8px', margin: '10px 0', border: '1px solid #333', cursor: 'pointer', transition: 'background 0.2s' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div key={destino.id} onClick={() => setCentroMapa([destino.lat, destino.lng])} style={{ background: '#222', padding: '12px', borderRadius: '8px', margin: '10px 0', border: '1px solid #333', cursor: 'pointer', position: 'relative' }}>
+            
+            {/* BOTÓN DE BORRAR ESTILIZADO */}
+            <button 
+              onClick={(e) => eliminarDestino(destino.id, e)}
+              style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: '#ff4d4d', cursor: 'pointer', fontSize: '16px', padding: '4px' }}
+              title="Eliminar destino"
+            >
+              🗑️
+            </button>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingRight: '25px' }}>
               <strong>{destino.ciudad}, {destino.pais}</strong>
-              <span style={{ fontSize: '12px', color: '#646cff' }}>{destino.clima}</span>
             </div>
+            <span style={{ fontSize: '12px', color: '#646cff', display: 'block', marginTop: '4px' }}>{destino.clima}</span>
             <div style={{ fontSize: '12px', color: '#aaa', marginTop: '5px' }}>📅 {destino.fechaInicio} ({destino.duracionDias} días)</div>
           </div>
         ))}
